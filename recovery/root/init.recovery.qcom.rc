@@ -27,9 +27,6 @@
 
 import /init.recovery.qcom_decrypt.rc
 
-on init
-    write /sys/class/backlight/panel0-backlight/brightness 200
-
 on fs
     wait /dev/block/platform/soc/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
@@ -38,14 +35,17 @@ on fs
     mkdir /firmware
     mount vfat /dev/block/bootdevice/by-name/modem${ro.boot.slot_suffix} /firmware ro
 
-on boot
-    start health-hal-2-1
-
 on post-fs
     # Asus backlight adjustment node
     symlink /proc/lcd_brightness /sys/class/backlight/panel0-backlight/brightness
     
     start boot-hal-1-1
+
+on init
+    write /sys/class/backlight/panel0-backlight/brightness 200
+
+on boot
+    start health-hal-2-1
 
 on property:twrp.modules.loaded=true
     # Load ADSP firmware for PMIC
